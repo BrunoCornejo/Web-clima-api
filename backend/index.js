@@ -1,7 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const climaRoutes = require('./routes/ClimaRoutes');
-const cors = require('cors'); // Importa el paquete CORS
+const cors = require('cors'); 
 require('dotenv').config();
 
 const app = express();

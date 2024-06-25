@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import './App.css';
 
-const API_WEATHER = `http://api.weatherapi.com/v1/current.json?key=${process.env.REACT_APP_API_KEY}&lang=es&q=`;
+const API_WEATHER = 'http://localhost:5000/api/clima/buscar';
 
 function App() {
   const [ciudad, setCiudad] = useState('');
@@ -15,24 +15,31 @@ function App() {
     e.preventDefault();
     setError('');
     setLoading(true);
-    setMostrarTarjeta(false); 
+    setMostrarTarjeta(false);  
 
     try {
       if (!ciudad.trim()) throw new Error('El campo ciudad es obligatorio');
 
-      const res = await fetch(API_WEATHER + ciudad);
+      const res = await fetch(API_WEATHER, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ ciudad })
+      });
+
       const data = await res.json();
 
       if (data.error) {
-        throw new Error(data.error.message);
+        throw new Error(data.error);
       }
 
       setClima({
-        city: data.location.name,
-        pais: data.location.country,
-        temperatura: data.current.temp_c,
-        condicionText: data.current.condition.text,
-        icono: data.current.condition.icon,
+        city: data.city,
+        pais: data.pais,
+        temperatura: data.temperatura,
+        condicionText: data.condicionText,
+        icono: data.icono
       });
 
       setMostrarTarjeta(true); 
@@ -66,7 +73,6 @@ function App() {
               {loading ? 'BUSCANDO...' : 'BUSCAR'}
             </button>
           </div>
-
         </form>
 
         {mostrarTarjeta && clima && (
